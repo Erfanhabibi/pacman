@@ -244,9 +244,9 @@ def evaluate_game(game):
     return score - shortest_path_length - single_foods_penalty
 
 
-def minimax(game, depth, alpha, beta, is_pacman_turn):
+def minimax(game, depth, alpha, beta, is_pacman_turn, last_best_move=None):
     if depth == 0 or game.won is not None:
-        return evaluate_game(game), None
+        return evaluate_game(game), last_best_move
 
     if is_pacman_turn:
         maxEval = float('-inf')
@@ -257,8 +257,8 @@ def minimax(game, depth, alpha, beta, is_pacman_turn):
                             direction, is_pacman_turn=True)
 
             if new_game is not None:
-                eval, _ = minimax(new_game, depth - 1, alpha,
-                                  beta, is_pacman_turn=False)
+                eval, _ = minimax(new_game, depth - 1, alpha, beta,
+                                  is_pacman_turn=False, last_best_move=last_best_move)
 
                 if eval > maxEval:
                     maxEval = eval
@@ -280,8 +280,8 @@ def minimax(game, depth, alpha, beta, is_pacman_turn):
                             is_pacman_turn=False)
 
             if new_game is not None:
-                eval, _ = minimax(new_game, depth - 1, alpha,
-                                  beta, is_pacman_turn=True)
+                eval, _ = minimax(new_game, depth - 1, alpha, beta,
+                                  is_pacman_turn=True, last_best_move=last_best_move)
 
                 if eval < minEval:
                     minEval = eval
@@ -322,7 +322,7 @@ def play():
         score_label.config(text=f"Score: {game.score}") 
 
         root.update()
-        root.after(10)  # Pause for 10 milliseconds
+        root.after(1)  # Pause for 10 milliseconds
         check_win_or_lost(game)
 
     result_label = tk.Label(
