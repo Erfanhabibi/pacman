@@ -100,19 +100,16 @@ def print_ground(game, canvas):
                        20, text=f'Score: {game.score}', font=('Helvetica', 14))
 
 
-
 def check_win_or_lost(game):
     flat_ground = game.field.flatten()
 
-    food_count = np.count_nonzero(
-        np.isin(flat_ground, [Game.FOOD, Game.GHOST_ON_FOOD]))
+    food_and_ghosts = np.isin(flat_ground, [Game.FOOD, Game.GHOST_ON_FOOD])
     ghost_count = np.count_nonzero(
         np.isin(flat_ground, [Game.GHOST, Game.GHOST_ON_FOOD]))
-    pacman_count = np.count_nonzero(flat_ground == Game.PACMAN)
 
-    if food_count == 0:
+    if np.sum(food_and_ghosts) == 0:
         game.won = True
-    elif ghost_count != Game.NUMBER_OF_GHOSTS or pacman_count != 1:
+    elif ghost_count != Game.NUMBER_OF_GHOSTS or np.sum(flat_ground == Game.PACMAN) != 1:
         game.won = False
 
 
