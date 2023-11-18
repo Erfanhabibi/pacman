@@ -6,6 +6,7 @@ from collections import deque
 import tkinter as tk
 from PIL import Image, ImageTk
 
+
 class Game:
     VALID_DIRECTIONS = ['u', 'd', 'l', 'r']
     NUMBER_OF_GHOSTS = 2
@@ -25,12 +26,24 @@ class Game:
         self._initialize_positions()
 
     def _initialize_positions(self):
+        position_indicators = {
+            self.PACMAN: self._set_pacman_position,
+            self.GHOST: self._add_ghost_position,
+            self.GHOST_ON_FOOD: self._add_ghost_position,
+        }
+
         for i in range(len(self.field)):
             for j in range(len(self.field[0])):
-                if self.field[i, j] == self.PACMAN:
-                    self.pacman_position = (i, j)
-                elif self.field[i, j] == self.GHOST or self.field[i, j] == self.GHOST_ON_FOOD:
-                    self.ghost_positions.append((i, j))
+                indicator = self.field[i, j]
+                position_handler = position_indicators.get(indicator)
+                if position_handler:
+                    position_handler((i, j))
+
+    def _set_pacman_position(self, position):
+        self.pacman_position = position
+
+    def _add_ghost_position(self, position):
+        self.ghost_positions.append(position)
 
 
 def initialize_game():
