@@ -13,7 +13,7 @@ class Game:
     EMPTY = ' '
     FOOD = '.'
     WALL = '#'
-    GHOST_FOOD = 'GF'
+    GHOST_ON_FOOD = 'GF'
     GHOST = 'G'
 
     def __init__(self, field):
@@ -29,14 +29,14 @@ class Game:
             for j in range(len(self.field[0])):
                 if self.field[i, j] == self.PACMAN:
                     self.pacman_position = (i, j)
-                elif self.field[i, j] == self.GHOST or self.field[i, j] == self.GHOST_FOOD:
+                elif self.field[i, j] == self.GHOST or self.field[i, j] == self.GHOST_ON_FOOD:
                     self.ghost_positions.append((i, j))
 
 
 def initialize_game():
     field = np.array([
-        [Game.GHOST_FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD,
-            Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.GHOST_FOOD],
+        [Game.GHOST_ON_FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD,
+            Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.GHOST_ON_FOOD],
         [Game.FOOD, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.WALL,
             Game.WALL, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD],
         [Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD,
@@ -68,7 +68,7 @@ def print_ground(game, canvas):
         Game.EMPTY: 'white',
         Game.PACMAN: 'yellow',
         Game.GHOST: 'red',
-        Game.GHOST_FOOD: 'red',
+        Game.GHOST_ON_FOOD: 'red',
         Game.FOOD: 'green',
         Game.WALL: 'black',
     }
@@ -92,9 +92,9 @@ def check_win_or_lost(game):
     flat_ground = game.field.flatten()
 
     food_count = np.count_nonzero(
-        np.isin(flat_ground, [Game.FOOD, Game.GHOST_FOOD]))
+        np.isin(flat_ground, [Game.FOOD, Game.GHOST_ON_FOOD]))
     ghost_count = np.count_nonzero(
-        np.isin(flat_ground, [Game.GHOST, Game.GHOST_FOOD]))
+        np.isin(flat_ground, [Game.GHOST, Game.GHOST_ON_FOOD]))
     pacman_count = np.count_nonzero(flat_ground == Game.PACMAN)
 
     if food_count == 0:
@@ -130,14 +130,14 @@ def move_ghosts(game, directions):
         new_position = get_new_position(ghost_position, directions[index])
 
         if is_valid_position(game, new_position):
-            if game.field[new_position] not in [Game.GHOST, Game.GHOST_FOOD]:
-                if game.field[ghost_position] == Game.GHOST_FOOD:
+            if game.field[new_position] not in [Game.GHOST, Game.GHOST_ON_FOOD]:
+                if game.field[ghost_position] == Game.GHOST_ON_FOOD:
                     game.field[ghost_position] = Game.FOOD
                 else:
                     game.field[ghost_position] = Game.EMPTY
 
                 if game.field[new_position] == Game.FOOD:
-                    game.field[new_position] = Game.GHOST_FOOD
+                    game.field[new_position] = Game.GHOST_ON_FOOD
                 else:
                     game.field[new_position] = Game.GHOST
 
