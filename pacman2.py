@@ -123,12 +123,12 @@ def move_pacman(game, direction):
         return False
 
     new_position = get_new_position(pacman_position, direction)
-    game.score -= 1
 
     if is_valid_position(game, new_position):
         if game.field[new_position] == Game.FOOD:
             game.score += 10
 
+        game.score -= 1 
         game.field[new_position] = Game.PACMAN
         game.field[pacman_position] = Game.EMPTY
         game.pacman_position = new_position
@@ -136,6 +136,7 @@ def move_pacman(game, direction):
         return True
 
     return False
+
 
 
 def move_ghosts(game, directions):
