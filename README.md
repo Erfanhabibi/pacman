@@ -43,8 +43,7 @@ This repository contains a simple Pacman game implemented in Python using the Tk
    pip install numpy pillow
 
 
-6. **Contributing:**
-```markdown
+
 ## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests to improve the game.
