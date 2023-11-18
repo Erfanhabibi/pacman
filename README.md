@@ -24,7 +24,7 @@ This repository contains a simple Pacman game implemented in Python using the Tk
 
 
 4. **Implementation Details:**
-```markdown
+
 ## Implementation Details
 
 - **Game Class:** The core game logic is implemented in the `Game` class, handling initialization, positions of Pacman and ghosts, and other game-related functionality.
