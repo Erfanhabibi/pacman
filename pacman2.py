@@ -319,7 +319,7 @@ def play():
         score_label.config(text=f"Score: {game.score}") 
 
         root.update()
-        root.after(1)  # Pause for 10 milliseconds
+        root.after(5)  # Pause for 5 milliseconds
         check_win_or_lost(game)
 
     result_label = tk.Label(
