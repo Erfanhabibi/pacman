@@ -220,11 +220,12 @@ def neighbors_have_food(game, x, y):
 
 def count_single_foods(game):
     field = game.field
+    valid_positions = np.argwhere(field == Game.FOOD)
+
     count = 0
-    for i in range(len(field)):
-        for j in range(len(field[0])):
-            if field[i, j] == Game.FOOD and not neighbors_have_food(game, i, j):
-                count += 1
+    for pos in valid_positions:
+        if not neighbors_have_food(game, *pos):
+            count += 1
     return count
 
 
@@ -311,8 +312,7 @@ def play():
             '-inf'), float('inf'), is_pacman_turn=True)
         move(game, direction, is_pacman_turn=True)
 
-        ghost_directions = [random.choice(
-            Game.VALID_DIRECTIONS) for _ in range(Game.NUMBER_OF_GHOSTS)]
+        ghost_directions = [random.choice(Game.VALID_DIRECTIONS) for _ in range(Game.NUMBER_OF_GHOSTS)]
         move(game, ghost_directions, is_pacman_turn=False)
 
 
