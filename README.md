@@ -11,19 +11,6 @@ This repository contains a simple Pacman game implemented in Python using the Tk
 - **Score System:** Pacman scores points by collecting food, and the score is displayed during the game.
 - **Game Over Conditions:** The game ends when Pacman collects all the food or encounters ghosts. The result (win or loss) is displayed at the end of the game.
 
-## Getting Started
-
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/your-username/pacman-game.git
-   cd pacman-game
-
-2. **Run the game**
-   ```bash
-   python pacman_game.py
-
-
-4. **Implementation Details:**
 
 ## Implementation Details
 
