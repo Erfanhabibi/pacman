@@ -242,7 +242,7 @@ def evaluate_game(game):
     return score - shortest_path_length - single_foods_penalty
 
 
-def minimax(game, depth, alpha, beta, is_pacman_turn, last_best_move=None):
+def minimax_alpha_beta(game, depth, alpha, beta, is_pacman_turn, last_best_move=None):
     if depth == 0 or game.won is not None:
         return evaluate_game(game), last_best_move
 
@@ -255,8 +255,8 @@ def minimax(game, depth, alpha, beta, is_pacman_turn, last_best_move=None):
                             direction, is_pacman_turn=True)
 
             if new_game is not None:
-                eval, _ = minimax(new_game, depth - 1, alpha, beta,
-                                  is_pacman_turn=False, last_best_move=last_best_move)
+                eval, _ = minimax_alpha_beta(new_game, depth - 1, alpha, beta,
+                                             is_pacman_turn=False, last_best_move=last_best_move)
 
                 if eval > maxEval:
                     maxEval = eval
@@ -278,8 +278,8 @@ def minimax(game, depth, alpha, beta, is_pacman_turn, last_best_move=None):
                             is_pacman_turn=False)
 
             if new_game is not None:
-                eval, _ = minimax(new_game, depth - 1, alpha, beta,
-                                  is_pacman_turn=True, last_best_move=last_best_move)
+                eval, _ = minimax_alpha_beta(new_game, depth - 1, alpha, beta,
+                                              is_pacman_turn=True, last_best_move=last_best_move)
 
                 if eval < minEval:
                     minEval = eval
@@ -308,15 +308,14 @@ def play():
 
     while game.won is None:
         print_ground(game, canvas)
-        _, direction = minimax(game, 3, float(
+        _, direction = minimax_alpha_beta(game, 3, float(
             '-inf'), float('inf'), is_pacman_turn=True)
         move(game, direction, is_pacman_turn=True)
 
         ghost_directions = [random.choice(Game.VALID_DIRECTIONS) for _ in range(Game.NUMBER_OF_GHOSTS)]
         move(game, ghost_directions, is_pacman_turn=False)
 
-
-        score_label.config(text=f"Score: {game.score}") 
+        score_label.config(text=f"Score: {game.score}")
 
         root.update()
         root.after(5)  # Pause for 5 milliseconds
