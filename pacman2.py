@@ -20,13 +20,13 @@ class Game:
     def __init__(self, field):
         self.field = field
         self.score = 0
-        self.won = None
+        self.game_result = None
         self.pacman_position = None
         self.ghost_positions = []
         self._initialize_positions()
 
     def _initialize_positions(self):
-        position_indicators = {
+        position_handlers = {
             self.PACMAN: self._set_pacman_position,
             self.GHOST: self._add_ghost_position,
             self.GHOST_ON_FOOD: self._add_ghost_position,
@@ -35,7 +35,7 @@ class Game:
         for i in range(len(self.field)):
             for j in range(len(self.field[0])):
                 indicator = self.field[i, j]
-                position_handler = position_indicators.get(indicator)
+                position_handler = position_handlers.get(indicator)
                 if position_handler:
                     position_handler((i, j))
 
@@ -49,23 +49,23 @@ class Game:
 def initialize_game():
     field = np.array([
         [Game.GHOST_ON_FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD,
-            Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.GHOST_ON_FOOD],
+         Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.GHOST_ON_FOOD],
         [Game.FOOD, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.WALL,
-            Game.WALL, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD],
+         Game.WALL, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD],
         [Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD,
-            Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD],
+         Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD],
         [Game.FOOD, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD,
-            Game.FOOD, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD],
+         Game.FOOD, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD],
         [Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD,
-            Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD],
+         Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD],
         [Game.FOOD, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.WALL,
-            Game.WALL, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD],
+         Game.WALL, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD],
         [Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD,
-            Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD],
+         Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD],
         [Game.FOOD, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.WALL,
-            Game.WALL, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD],
+         Game.WALL, Game.WALL, Game.WALL, Game.FOOD, Game.WALL, Game.FOOD, Game.WALL, Game.WALL, Game.FOOD],
         [Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD,
-            Game.PACMAN, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD]
+         Game.PACMAN, Game.FOOD, Game.FOOD, Game.FOOD, Game.WALL, Game.FOOD, Game.FOOD, Game.FOOD, Game.FOOD]
     ])
 
     return Game(field)
@@ -73,7 +73,6 @@ def initialize_game():
 
 def get_permutations(lst, n):
     return [p for p in itertools.product(lst, repeat=n)]
-
 
 
 def print_ground(game, canvas):
@@ -108,9 +107,9 @@ def check_win_or_lost(game):
         np.isin(flat_ground, [Game.GHOST, Game.GHOST_ON_FOOD]))
 
     if np.sum(food_and_ghosts) == 0:
-        game.won = True
+        game.game_result = True
     elif ghost_count != Game.NUMBER_OF_GHOSTS or np.sum(flat_ground == Game.PACMAN) != 1:
-        game.won = False
+        game.game_result = False
 
 
 def move_pacman(game, direction):
@@ -125,7 +124,7 @@ def move_pacman(game, direction):
         if game.field[new_position] == Game.FOOD:
             game.score += 10
 
-        game.score -= 1 
+        game.score -= 1
         game.field[new_position] = Game.PACMAN
         game.field[pacman_position] = Game.EMPTY
         game.pacman_position = new_position
@@ -133,7 +132,6 @@ def move_pacman(game, direction):
         return True
 
     return False
-
 
 
 def move_ghosts(game, directions):
@@ -230,9 +228,9 @@ def count_single_foods(game):
 
 
 def evaluate_game(game):
-    if game.won:
+    if game.game_result:
         return float('inf')
-    elif game.won is not None:
+    elif game.game_result is not None:
         return float('-inf')
 
     score = game.score
@@ -243,7 +241,7 @@ def evaluate_game(game):
 
 
 def minimax_alpha_beta(game, depth, alpha, beta, is_pacman_turn, last_best_move=None):
-    if depth == 0 or game.won is not None:
+    if depth == 0 or game.game_result is not None:
         return evaluate_game(game), last_best_move
 
     if is_pacman_turn:
@@ -279,7 +277,7 @@ def minimax_alpha_beta(game, depth, alpha, beta, is_pacman_turn, last_best_move=
 
             if new_game is not None:
                 eval, _ = minimax_alpha_beta(new_game, depth - 1, alpha, beta,
-                                              is_pacman_turn=True, last_best_move=last_best_move)
+                                             is_pacman_turn=True, last_best_move=last_best_move)
 
                 if eval < minEval:
                     minEval = eval
@@ -306,13 +304,14 @@ def play():
         root, text=f"Score: {game.score}", font=('Helvetica', 14))
     score_label.pack()
 
-    while game.won is None:
+    while game.game_result is None:
         print_ground(game, canvas)
         _, direction = minimax_alpha_beta(game, 3, float(
             '-inf'), float('inf'), is_pacman_turn=True)
         move(game, direction, is_pacman_turn=True)
 
-        ghost_directions = [random.choice(Game.VALID_DIRECTIONS) for _ in range(Game.NUMBER_OF_GHOSTS)]
+        ghost_directions = [random.choice(
+            Game.VALID_DIRECTIONS) for _ in range(Game.NUMBER_OF_GHOSTS)]
         move(game, ghost_directions, is_pacman_turn=False)
 
         score_label.config(text=f"Score: {game.score}")
@@ -322,7 +321,7 @@ def play():
         check_win_or_lost(game)
 
     result_label = tk.Label(
-        root, text="You won!" if game.won else "You lost!", font=('Helvetica', 16))
+        root, text="You won!" if game.game_result else "You lost!", font=('Helvetica', 16))
     result_label.pack()
 
     root.mainloop()
