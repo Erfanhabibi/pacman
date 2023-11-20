@@ -107,9 +107,9 @@ def is_valid_position(game, position):
     return 0 <= x < len(game.field) and 0 <= y < len(game.field[0]) and game.field[x, y] != Game.WALL
 
 
-def len_shortest_path_to_food(game):
-    x, y = game.pacman_position
+def shortest_path(game):
     field = game.field
+    x, y = game.pacman_position
     queue = [(x, y, 0)]
     visited = {}
 
@@ -210,7 +210,7 @@ def evaluate_game(game):
         return float('-inf')
 
     score = game.score
-    shortest_path_length = len_shortest_path_to_food(game)
+    shortest_path_length = shortest_path(game)
     single_foods_penalty = 5 * count_single_foods(game)
 
     return score - shortest_path_length - single_foods_penalty
