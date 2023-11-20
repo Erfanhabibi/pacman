@@ -75,7 +75,6 @@ def get_permutations(lst, n):
     return [p for p in itertools.product(lst, repeat=n)]
 
 
-
 def check_win_or_lost(game):
     flat_ground = game.field.flatten()
 
@@ -87,6 +86,48 @@ def check_win_or_lost(game):
         game.game_result = True
     elif ghost_count != Game.NUMBER_OF_GHOSTS or np.sum(flat_ground == Game.PACMAN) != 1:
         game.game_result = False
+
+
+def get_new_position(position, direction):
+    x, y = position
+    if direction == 'u':
+        return x - 1, y
+    elif direction == 'd':
+        return x + 1, y
+    elif direction == 'l':
+        return x, y - 1
+    elif direction == 'r':
+        return x, y + 1
+    else:
+        return position
+
+
+def is_valid_position(game, position):
+    x, y = position
+    return 0 <= x < len(game.field) and 0 <= y < len(game.field[0]) and game.field[x, y] != Game.WALL
+
+
+def len_shortest_path_to_food(game):
+    x, y = game.pacman_position
+    field = game.field
+    queue = [(x, y, 0)]
+    visited = {}
+
+    while queue:
+        x, y, distance = queue.pop(0)
+
+        if field[x, y] == Game.FOOD:
+            return distance
+
+        if (x, y) not in visited:
+            visited[(x, y)] = True
+
+            for dx, dy in [(0, -1), (-1, 0), (0, 1), (1, 0)]:
+                new_x, new_y = x + dx, y + dy
+                if is_valid_position(game, (new_x, new_y)):
+                    queue.append((new_x, new_y, distance + 1))
+
+    return len(game.field) * len(game.field[0])
 
 
 def move_pacman(game, direction):
@@ -131,25 +172,6 @@ def move_ghosts(game, directions):
                 game.ghost_positions.append(new_position)
 
 
-def get_new_position(position, direction):
-    x, y = position
-    if direction == 'u':
-        return x - 1, y
-    elif direction == 'd':
-        return x + 1, y
-    elif direction == 'l':
-        return x, y - 1
-    elif direction == 'r':
-        return x, y + 1
-    else:
-        return position
-
-
-def is_valid_position(game, position):
-    x, y = position
-    return 0 <= x < len(game.field) and 0 <= y < len(game.field[0]) and game.field[x, y] != Game.WALL
-
-
 def move(game, direction, is_pacman_turn):
     if is_pacman_turn:
         move_pacman(game, direction)
@@ -157,30 +179,6 @@ def move(game, direction, is_pacman_turn):
         move_ghosts(game, direction)
     check_win_or_lost(game)
     return game
-
-
-def len_shortest_path_to_food(game):
-    x, y = game.pacman_position
-    field = game.field
-    queue = [(x, y, 0)]
-    visited = {}
-
-    while queue:
-        x, y, distance = queue.pop(0)
-
-        if field[x, y] == Game.FOOD:
-            return distance
-
-        if (x, y) not in visited:
-            visited[(x, y)] = True
-
-            for dx, dy in [(0, -1), (-1, 0), (0, 1), (1, 0)]:
-                new_x, new_y = x + dx, y + dy
-                if is_valid_position(game, (new_x, new_y)):
-                    queue.append((new_x, new_y, distance + 1))
-
-    return len(game.field) * len(game.field[0])
-
 
 
 def neighbors_have_food(game, x, y):
@@ -290,7 +288,6 @@ def print_game(game, canvas):
 
     canvas.create_text(cols * cell_size // 2, rows * cell_size +
                        20, text=f'Score: {game.score}', font=('Helvetica', 14))
-
 
 
 def play():
