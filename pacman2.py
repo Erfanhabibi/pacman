@@ -75,29 +75,6 @@ def get_permutations(lst, n):
     return [p for p in itertools.product(lst, repeat=n)]
 
 
-def print_ground(game, canvas):
-    element_to_color = {
-        Game.EMPTY: 'white',
-        Game.PACMAN: 'yellow',
-        Game.GHOST: 'red',
-        Game.GHOST_ON_FOOD: 'red',
-        Game.FOOD: 'green',
-        Game.WALL: 'black',
-    }
-
-    rows, cols = game.field.shape
-    cell_size = 40
-
-    for i in range(rows):
-        for j in range(cols):
-            element = game.field[i, j]
-            color = element_to_color.get(element, 'white')
-            canvas.create_rectangle(
-                j * cell_size, i * cell_size, (j + 1) * cell_size, (i + 1) * cell_size, fill=color)
-
-    canvas.create_text(cols * cell_size // 2, rows * cell_size +
-                       20, text=f'Score: {game.score}', font=('Helvetica', 14))
-
 
 def check_win_or_lost(game):
     flat_ground = game.field.flatten()
@@ -185,17 +162,17 @@ def move(game, direction, is_pacman_turn):
 def len_shortest_path_to_food(game):
     x, y = game.pacman_position
     field = game.field
-    queue = deque([(x, y, 0)])
-    visited = set()
+    queue = [(x, y, 0)]
+    visited = {}
 
     while queue:
-        x, y, distance = queue.popleft()
+        x, y, distance = queue.pop(0)
 
         if field[x, y] == Game.FOOD:
             return distance
 
         if (x, y) not in visited:
-            visited.add((x, y))
+            visited[(x, y)] = True
 
             for dx, dy in [(0, -1), (-1, 0), (0, 1), (1, 0)]:
                 new_x, new_y = x + dx, y + dy
@@ -203,6 +180,7 @@ def len_shortest_path_to_food(game):
                     queue.append((new_x, new_y, distance + 1))
 
     return len(game.field) * len(game.field[0])
+
 
 
 def neighbors_have_food(game, x, y):
@@ -290,6 +268,31 @@ def minimax_alpha_beta(game, depth, alpha, beta, is_pacman_turn, last_best_move=
         return minEval, None
 
 
+def print_game(game, canvas):
+    element_to_color = {
+        Game.EMPTY: 'white',
+        Game.PACMAN: 'yellow',
+        Game.GHOST: 'red',
+        Game.GHOST_ON_FOOD: 'red',
+        Game.FOOD: 'green',
+        Game.WALL: 'black',
+    }
+
+    rows, cols = game.field.shape
+    cell_size = 40
+
+    for i in range(rows):
+        for j in range(cols):
+            element = game.field[i, j]
+            color = element_to_color.get(element, 'white')
+            canvas.create_rectangle(
+                j * cell_size, i * cell_size, (j + 1) * cell_size, (i + 1) * cell_size, fill=color)
+
+    canvas.create_text(cols * cell_size // 2, rows * cell_size +
+                       20, text=f'Score: {game.score}', font=('Helvetica', 14))
+
+
+
 def play():
     game = initialize_game()
 
@@ -305,7 +308,7 @@ def play():
     score_label.pack()
 
     while game.game_result is None:
-        print_ground(game, canvas)
+        print_game(game, canvas)
         _, direction = minimax_alpha_beta(game, 3, float(
             '-inf'), float('inf'), is_pacman_turn=True)
         move(game, direction, is_pacman_turn=True)
